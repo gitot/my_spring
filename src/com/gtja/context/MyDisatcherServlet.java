@@ -10,6 +10,8 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Properties;
 
 /**
@@ -21,6 +23,7 @@ public class MyDisatcherServlet extends HttpServlet {
     ClassLoader loader = this.getClass().getClassLoader();
     Properties properties = new Properties();
     String scanPath;
+    List clas = new ArrayList();
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
@@ -59,13 +62,16 @@ public class MyDisatcherServlet extends HttpServlet {
 
     private void doScanAndInstance(String path) {
         File file = new File(path);
-        if (null == file || !file.isDirectory()) {
+        if (null == file) {
             return;
+        }
+        if (!file.isDirectory()) {
+
         }
         File[] files = file.listFiles();
         for (File f : files) {
             if (!f.isDirectory()) {
-                f.getName();
+
             } else {
                 doScanAndInstance(f.getPath());
             }
