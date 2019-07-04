@@ -1,8 +1,8 @@
-package com.gtja.service.impl;
+package com.gtja.component.service.impl;
 
 import com.gtja.annotation.MyService;
+import com.gtja.component.service.UserService;
 import com.gtja.entity.User;
-import com.gtja.service.UserService;
 
 import java.util.Random;
 

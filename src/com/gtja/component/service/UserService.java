@@ -1,4 +1,4 @@
-package com.gtja.service;
+package com.gtja.component.service;
 
 import com.gtja.entity.User;
 

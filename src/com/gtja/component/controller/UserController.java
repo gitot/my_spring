@@ -1,15 +1,16 @@
-package com.gtja.controller;
+package com.gtja.component.controller;
 
 import com.gtja.annotation.MyAutowired;
+import com.gtja.annotation.MyController;
 import com.gtja.annotation.MyRequestMapping;
 import com.gtja.entity.User;
-import com.gtja.service.UserService;
+import com.gtja.component.service.UserService;
 
 /**
  * @Author Guyot
  * @Date 2019/6/27 17:18
  */
-@com.gtja.annotation.MyController
+@MyController
 @MyRequestMapping("/user")
 public class UserController {
 
