@@ -15,6 +15,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.*;
 
@@ -36,13 +37,29 @@ public class MyDisatcherServlet extends HttpServlet {
         doPost(req, resp);
     }
 
-    @Override
-    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        resp.getWriter().print("hello world");
-    }
 
     @Override
-    protected void service(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        try {
+            doDispatch(req, resp);
+        } catch (InvocationTargetException e) {
+            e.printStackTrace();
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void doDispatch(HttpServletRequest req, HttpServletResponse resp) throws InvocationTargetException, IllegalAccessException, IOException {
+        String requestURI = req.getRequestURI();
+        String contextPath = req.getContextPath();
+        String url = requestURI.replaceAll(contextPath, "");
+        Method method = handlerMapping.get(url);
+        if (null == method) {
+            resp.getWriter().println("404 Not found");
+        } else {
+            Object result = method.invoke(ioc.get("userController"), new Object[]{"guyot"});
+            resp.getWriter().println(result.toString());
+        }
     }
 
     @Override
@@ -79,16 +96,15 @@ public class MyDisatcherServlet extends HttpServlet {
             String url = "";
             if (entry.getValue().getClass().isAnnotationPresent(MyRequestMapping.class)) {
                 MyRequestMapping mapping = entry.getValue().getClass().getDeclaredAnnotation(MyRequestMapping.class);
-                url += mapping;
+                url += mapping.value();
             }
             Method[] methods = entry.getValue().getClass().getMethods();
             for (Method method : methods) {
                 if (method.isAnnotationPresent(MyRequestMapping.class)) {
                     MyRequestMapping methodMapping = method.getAnnotation(MyRequestMapping.class);
-                    url +=methodMapping;
+                    url += methodMapping.value();
                     url = url.replaceAll("/+", "/");
-//                    handlerMapping.put(url, entry.getValue());
-
+                    handlerMapping.put(url, method);
                 }
             }
         }
